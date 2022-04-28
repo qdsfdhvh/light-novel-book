@@ -1,4 +1,3 @@
 <resources>
-    <style name="Theme" />
-    <style name="Theme.LightNovelBook" />
+    <style name="Theme.LightNovelBook" parent="android:Theme.Light.NoTitleBar" />
 </resources>
