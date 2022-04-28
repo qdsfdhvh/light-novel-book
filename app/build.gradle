@@ -3,6 +3,14 @@ plugins {
     id 'org.jetbrains.kotlin.android'
 }
 
+File keyProperties = rootProject.file("key.properties")
+def props = new Properties()
+if (keyProperties.exists()) {
+    props.load(new FileInputStream(keyProperties))
+} else {
+    props['TEST_PHPSESSID'] = 'none'
+}
+
 android {
     compileSdk 32
     defaultConfig {
@@ -17,6 +25,11 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+
+            buildConfigField("String", "TEST_PHPSESSID", "\"" + props["TEST_PHPSESSID"] + "\"")
+        }
+        debug {
+            buildConfigField("String", "TEST_PHPSESSID", "\"" + props["TEST_PHPSESSID"] + "\"")
         }
     }
     compileOptions {
@@ -32,6 +45,7 @@ android {
 dependencies {
     implementation("androidx.core:core-ktx:1.7.0")
     implementation("androidx.activity:activity-ktx:1.4.0")
+    implementation("androidx.recyclerview:recyclerview:1.2.1")
 
     // lifecycle
     implementation("androidx.lifecycle:lifecycle-common:2.4.1")
@@ -45,7 +59,23 @@ dependencies {
     // Di
     implementation("io.insert-koin:koin-android:3.1.5")
 
-    testImplementation 'junit:junit:4.13.2'
+    // Http
+    implementation("com.squareup.okhttp3:okhttp:4.9.3")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.9.3")
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("org.jsoup:jsoup:1.14.3")
+
+    // Coroutines
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.1")
+
+    // Pref
+    implementation("androidx.datastore:datastore:1.0.0")
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
+
+    // Image
+    implementation("io.coil-kt:coil:2.0.0-rc03")
+
+    testImplementation("junit:junit:4.13.2")
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
 }

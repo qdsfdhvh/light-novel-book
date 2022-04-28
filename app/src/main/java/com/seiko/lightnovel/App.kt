@@ -1,6 +1,8 @@
 package com.seiko.lightnovel
 
 import android.app.Application
+import com.seiko.lightnovel.di.dataSourceModule
+import com.seiko.lightnovel.di.httpModule
 import com.seiko.lightnovel.di.viewModelModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
@@ -13,7 +15,11 @@ class App : Application() {
         startKoin {
             androidLogger(if (BuildConfig.DEBUG) Level.ERROR else Level.NONE)
             androidContext(this@App)
-            modules(viewModelModule)
+            modules(
+                httpModule,
+                dataSourceModule,
+                viewModelModule,
+            )
         }
     }
 }

@@ -2,13 +2,10 @@ package com.seiko.lightnovel
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
-import androidx.navigation.NavType
 import androidx.navigation.createGraph
-import androidx.navigation.navArgument
 import com.seiko.lightnovel.component.navigation.NavHostLayout
-import com.seiko.lightnovel.component.navigation.composable
-import com.seiko.lightnovel.ui.DetailLayout
-import com.seiko.lightnovel.ui.HomeLayout
+import com.seiko.lightnovel.route.Route
+import com.seiko.lightnovel.route.route
 
 class MainActivity : ComponentActivity() {
 
@@ -22,20 +19,8 @@ class MainActivity : ComponentActivity() {
         navController.setLifecycleOwner(this)
         navController.setOnBackPressedDispatcher(onBackPressedDispatcher)
 
-        val graph = navController.createGraph(
-            startDestination = "home",
-        ) {
-            composable("home") {
-                HomeLayout(this@MainActivity)
-            }
-            composable(
-                route = "detail/{key}",
-                arguments = listOf(
-                    navArgument("key") { type = NavType.StringType },
-                ),
-            ) {
-                DetailLayout(this@MainActivity, it.getString("key")!!)
-            }
+        val graph = navController.createGraph(startDestination = Route.initialRoute) {
+            route(this@MainActivity)
         }
         navController.setGraph(graph, startDestinationArgs = null)
     }

@@ -1,8 +1,9 @@
-package com.seiko.lightnovel.ui
+package com.seiko.lightnovel.ui.scene
 
 import android.annotation.SuppressLint
 import android.content.Context
 import android.widget.TextView
+import androidx.lifecycle.lifecycleScope
 import com.seiko.lightnovel.component.koin.viewModel
 import com.seiko.lightnovel.component.view.autoMeasure
 import com.seiko.lightnovel.viewmodel.DetailViewModel
@@ -22,7 +23,9 @@ class DetailLayout(context: Context, key: String) : BaseLayout(context) {
 
         addView(title)
 
-        viewModel.init()
+        lifecycleScope.launchWhenResumed {
+            viewModel.init()
+        }
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {

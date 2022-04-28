@@ -1,4 +1,4 @@
-package com.seiko.lightnovel.ui
+package com.seiko.lightnovel.ui.scene
 
 import android.content.Context
 import androidx.navigation.NavController
