@@ -1,5 +1,6 @@
 package com.seiko.lightnovel.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
@@ -30,4 +31,8 @@ class HomeViewModel(
         }
     }.flowOn(Dispatchers.IO).cachedIn(viewModelScope)
 
+    override fun onCleared() {
+        super.onCleared()
+        Log.d("HomeViewModel", "onCleared")
+    }
 }

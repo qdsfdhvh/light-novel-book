@@ -5,6 +5,7 @@ import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface Wenku8Client {
@@ -28,4 +29,16 @@ interface Wenku8Client {
         @Query("page") page: Int, // 1+
     ): ResponseBody
 
+    @GET("book/{aid}.htm")
+    suspend fun getDetail(
+        @Path("aid") aid: Int,
+    ): ResponseBody
+
+    @GET("novel/{dir}/{aid}/index.htm")
+    suspend fun getDetailVolumes(
+        @Path("dir") dir: Int,
+        @Path("aid") aid: Int,
+    ): ResponseBody
+
+    // 5 volumes and 12 chapters
 }

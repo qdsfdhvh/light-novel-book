@@ -1,6 +1,9 @@
 package com.seiko.lightnovel.data.mapper
 
 import com.seiko.lightnovel.data.model.bean.ArticleBean
+import com.seiko.lightnovel.data.model.bean.ArticleChapter
+import com.seiko.lightnovel.data.model.bean.ArticleDetailBean
+import com.seiko.lightnovel.data.model.bean.ArticleVolume
 import com.seiko.lightnovel.data.model.enums.ArticleLibrary
 import com.seiko.lightnovel.data.model.enums.ArticleState
 import com.seiko.lightnovel.data.model.enums.valueOfText
@@ -48,4 +51,77 @@ fun Document.toArticleList(): List<ArticleBean> {
             hasDrama = hasDrama,
         )
     }
+}
+
+fun Document.toArticleDetail(aid: Int): ArticleDetailBean {
+    val content = select("#content")
+
+    val tables = content.select("div > table")
+    val table1 = tables.eq(0)
+    val table2 = tables.eq(1)
+
+    val title = table1.select("b").text()
+    val cover = table2.select("img").attr("src")
+
+    val info = table1.select("tr > td[width=\"20%\"]")
+    val library = info.eq(0).text().substring(5).let { ArticleLibrary.valueOfTitle(it) }
+    val author = info.eq(1).text().substring(5)
+    val state = info.eq(2).text().substring(5).let { ArticleState.valueOfText(it) }
+    val updateTime = info.eq(3).text().substring(5)
+    val codeSize = info.eq(4).text().substring(5)
+
+    val tags = table2.select("td > span.hottext")
+        .eq(1).select("b").text().substringAfter('：').split(" ")
+    val desc = table2.select("td > span[style=\"font-size:14px;\"]")
+        .eq(1).text().substringAfter('：')
+
+    val hasDrama = table2.select("td > span.hottext").eq(0).text().contains("动画化")
+
+    return ArticleDetailBean(
+        id = aid,
+        title = title,
+        cover = cover,
+        author = author,
+        library = library,
+        tags = tags,
+        desc = desc,
+        updateTime = updateTime,
+        codeSize = codeSize,
+        state = state,
+        hasDrama = hasDrama,
+    )
+}
+
+fun Document.toArticleVolumes(): List<ArticleVolume> {
+    val content = select("table[border=\"0\"]")
+    val trs = content.select("tr")
+
+    val volumes = mutableListOf<ArticleVolume>()
+    var chapters = mutableListOf<ArticleChapter>()
+    trs.forEach { tr ->
+        if (tr.child(0).hasAttr("vid")) {
+            chapters = mutableListOf()
+            volumes.add(
+                ArticleVolume(
+                    id = tr.child(0).attr("vid").toInt(),
+                    title = tr.text(),
+                    chapters = chapters,
+                )
+            )
+        } else {
+            chapters.addAll(
+                tr.children()
+                    .asSequence()
+                    .filter { it.select("a").hasAttr("href") }
+                    .map { td ->
+                        ArticleChapter(
+                            id = "(\\d+)".toRegex().find(td.child(0).attr("href"))
+                            !!.value.toInt(),
+                            title = td.text(),
+                        )
+                    }
+            )
+        }
+    }
+    return volumes
 }
