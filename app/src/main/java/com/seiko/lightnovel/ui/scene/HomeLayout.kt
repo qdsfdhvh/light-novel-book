@@ -1,8 +1,6 @@
 package com.seiko.lightnovel.ui.scene
 
 import android.content.Context
-import android.widget.Button
-import android.widget.TextView
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -20,24 +18,19 @@ class HomeLayout(context: Context) : BaseLayout(context) {
 
     private val viewModel: HomeViewModel by viewModel()
 
-    private val navController by lazy(LazyThreadSafetyMode.NONE) {
-        findNavController()
-    }
-
     init {
         addView(recyclerView)
 
-        // btnDetail.setOnClickListener {
-        //     navController.navigate("detail/test")
-        // }
+        val adapter = ArticleListAdapter { article ->
+            navController.navigate("detail/${article.id}")
+        }
 
-        val adapter = ArticleListAdapter()
         recyclerView.layoutManager = LinearLayoutManager(context)
         recyclerView.adapter = adapter
 
-        viewModel.topList
+        viewModel.topPagingList
             .flowWithLifecycle(lifecycle)
-            .onEach { adapter.submitList(it) }
+            .onEach { adapter.submitData(it) }
             .launchIn(lifecycleScope)
     }
 

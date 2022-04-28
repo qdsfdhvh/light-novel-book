@@ -10,16 +10,16 @@ import com.seiko.lightnovel.viewmodel.DetailViewModel
 import org.koin.core.parameter.parametersOf
 
 @SuppressLint("ViewConstructor")
-class DetailLayout(context: Context, key: String) : BaseLayout(context) {
+class DetailLayout(context: Context, aid: Int) : BaseLayout(context) {
 
     private val title = TextView(context)
 
     private val viewModel: DetailViewModel by viewModel(parameters = {
-        parametersOf(key)
+        parametersOf(aid)
     })
 
     init {
-        title.text = "Detail"
+        title.text = "Detail $aid"
 
         addView(title)
 

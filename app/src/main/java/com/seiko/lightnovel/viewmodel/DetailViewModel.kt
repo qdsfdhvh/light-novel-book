@@ -4,10 +4,10 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 
 class DetailViewModel(
-    private val key: String,
+    private val aid: Int,
 ) : ViewModel() {
 
     fun init() {
-        Log.d("DetailViewModel", "init $key")
+        Log.d("DetailViewModel", "init $aid")
     }
 }

@@ -15,16 +15,16 @@ fun NavGraphBuilder.route(context: Context) {
     composable(
         route = Route.Detail,
         arguments = listOf(
-            navArgument("key") { type = NavType.StringType },
+            navArgument("aid") { type = NavType.IntType },
         ),
     ) {
-        DetailLayout(context, it.getString("key")!!)
+        DetailLayout(context, it.getInt("aid"))
     }
 }
 
 object Route {
     const val Home = "home"
-    const val Detail = "detail/{key}"
+    const val Detail = "detail/{aid}"
 
     const val initialRoute = Home
 }

@@ -4,8 +4,8 @@ import android.content.Context
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.seiko.lightnovel.component.view.CustomLayout
@@ -14,14 +14,26 @@ import com.seiko.lightnovel.component.view.dp
 import com.seiko.lightnovel.component.view.toExactlyMeasureSpec
 import com.seiko.lightnovel.data.model.ui.UiArticle
 
-class ArticleListAdapter : ListAdapter<UiArticle, ArticleListViewHolder>(ArticleListDiffCallback()) {
+class ArticleListAdapter(
+    private val itemClickListener: OnItemClickListener
+) : PagingDataAdapter<UiArticle, ArticleListViewHolder>(ArticleListDiffCallback()) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ArticleListViewHolder {
         val layout = ArticleItemLayout(parent.context)
-        return ArticleListViewHolder(layout)
+        val holder = ArticleListViewHolder(layout)
+        layout.setOnClickListener {
+            val item = requireNotNull(getItem(holder.layoutPosition))
+            itemClickListener.onItemClick(item)
+        }
+        return holder
     }
 
     override fun onBindViewHolder(holder: ArticleListViewHolder, position: Int) {
-        holder.layout.update(getItem(position))
+        val item = requireNotNull(getItem(position))
+        holder.layout.update(item)
+    }
+
+    fun interface OnItemClickListener {
+        fun onItemClick(item: UiArticle)
     }
 }
 
@@ -38,7 +50,6 @@ class ArticleItemLayout(context: Context) : CustomLayout(context) {
     }
 
     fun update(state: UiArticle) {
-        // TODO
         coverView.load(state.cover)
         titleView.text = state.title
     }
