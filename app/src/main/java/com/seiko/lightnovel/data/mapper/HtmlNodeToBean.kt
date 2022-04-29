@@ -8,15 +8,13 @@ import com.seiko.lightnovel.data.model.enums.ArticleLibrary
 import com.seiko.lightnovel.data.model.enums.ArticleState
 import com.seiko.lightnovel.data.model.enums.valueOfText
 import com.seiko.lightnovel.data.model.enums.valueOfTitle
-import org.jsoup.nodes.Document
+import com.seiko.lightnovel.util.HtmlNode
 
-private val String.aid: Int
-    get() = "(\\d+)".toRegex().find(substringAfterLast('/'))?.value?.toIntOrNull() ?: 0
-
-fun Document.toArticleList(): List<ArticleBean> {
+fun HtmlNode.toArticleList(): List<ArticleBean> {
     return select("#content td > div").map { node ->
         val a = node.select("b > a")
-        val id = a.attr("href").aid
+        val id = "(\\d+)".toRegex()
+            .find(a.attr("href").substringAfterLast('/'))!!.value.toInt()
         val title = a.attr("title")
 
         val cover = node.select("img").attr("src")
@@ -53,7 +51,7 @@ fun Document.toArticleList(): List<ArticleBean> {
     }
 }
 
-fun Document.toArticleDetail(aid: Int): ArticleDetailBean {
+fun HtmlNode.toArticleDetail(aid: Int): ArticleDetailBean {
     val content = select("#content")
 
     val tables = content.select("div > table")
@@ -92,7 +90,7 @@ fun Document.toArticleDetail(aid: Int): ArticleDetailBean {
     )
 }
 
-fun Document.toArticleVolumes(): List<ArticleVolume> {
+fun HtmlNode.toArticleVolumes(): List<ArticleVolume> {
     val content = select("table[border=\"0\"]")
     val trs = content.select("tr")
 

@@ -7,7 +7,7 @@ import org.junit.Test
 import java.io.File
 import java.nio.charset.Charset
 
-class DocumentToBeanTest {
+class HtmlNodeToBeanTest {
 
     @Test
     fun testArticleList() {
