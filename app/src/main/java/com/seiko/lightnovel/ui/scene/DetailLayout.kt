@@ -33,7 +33,7 @@ class DetailLayout(context: Context, aid: Int) : BaseListLayout(context) {
 
         }
         val volumeAdapter = ArticleDetailVolumeAdapter {
-            Toast.makeText(context.applicationContext, it.title, Toast.LENGTH_SHORT).show()
+            navController.navigate("reader/${it.id}")
         }
 
         recyclerView.layoutManager = LinearLayoutManager(context)
