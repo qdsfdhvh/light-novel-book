@@ -7,6 +7,7 @@ import com.seiko.lightnovel.data.model.ui.UiArticleDetail
 import com.seiko.lightnovel.datasource.Wenku8DataSource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
@@ -17,19 +18,25 @@ class DetailViewModel(
     private val dataSource: Wenku8DataSource,
 ) : ViewModel() {
 
-    val bookDetail = combine(
+    val bookDetail: StateFlow<DetailState> = combine(
         flow { emit(dataSource.getDetail(aid)) },
         flow { emit(dataSource.getDetailVolumes(aid)) },
     ) { detail, volumes ->
-        UiArticleDetail.of(detail, volumes)
+        val uiDetail = UiArticleDetail.of(detail, volumes)
+        DetailState.Success(uiDetail)
     }.flowOn(Dispatchers.IO).stateIn(
         scope = viewModelScope,
         started = SharingStarted.Lazily,
-        initialValue = UiArticleDetail.Empty,
+        initialValue = DetailState.Loading,
     )
 
     override fun onCleared() {
         super.onCleared()
         Log.d("DetailViewModel", "onCleared $aid")
     }
+}
+
+sealed class DetailState {
+    object Loading : DetailState()
+    data class Success(val detail: UiArticleDetail) : DetailState()
 }

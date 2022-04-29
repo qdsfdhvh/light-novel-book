@@ -1,6 +1,7 @@
 package com.seiko.lightnovel
 
 import android.app.Application
+import com.seiko.lightnovel.di.componentModule
 import com.seiko.lightnovel.di.dataSourceModule
 import com.seiko.lightnovel.di.httpModule
 import com.seiko.lightnovel.di.viewModelModule
@@ -19,6 +20,7 @@ class App : Application() {
                 httpModule,
                 dataSourceModule,
                 viewModelModule,
+                componentModule,
             )
         }
     }
