@@ -27,11 +27,13 @@ interface Wenku8Client {
     suspend fun getTopList(
         @Query("sort") sort: String, // lastupdate
         @Query("page") page: Int, // 1+
+        @Query("charset") charset: String,
     ): ResponseBody
 
     @GET("book/{aid}.htm")
     suspend fun getDetail(
         @Path("aid") aid: Int,
+        @Query("charset") charset: String,
     ): ResponseBody
 
     @GET("novel/{dir}/{aid}/index.htm")

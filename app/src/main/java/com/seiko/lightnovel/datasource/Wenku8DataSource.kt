@@ -32,26 +32,27 @@ class Wenku8DataSource(
 
     suspend fun getTopList(sort: ArticleSort, page: Int): List<ArticleBean> =
         withContext(Dispatchers.IO) {
-            val response = client.getTopList(sort.name.lowercase(), page)
+            val response = client.getTopList(sort.name.lowercase(), page, Charsets.UTF_8.name())
             val document = response.toDocument()
             document.toArticleList()
         }
 
     suspend fun getDetail(aid: Int): ArticleDetailBean =
         withContext(Dispatchers.IO) {
-            val response = client.getDetail(aid)
+            val response = client.getDetail(aid, Charsets.UTF_8.name())
             val document = response.toDocument()
             document.toArticleDetail(aid)
         }
 
     suspend fun getDetailVolumes(aid: Int): List<ArticleVolume> =
         withContext(Dispatchers.IO) {
+            // api not support charset
             val response = client.getDetailVolumes(aid / 1000, aid)
-            val document = response.toDocument()
+            val document = response.toDocument(Charset.forName("GBK"))
             document.toArticleVolumes()
         }
 
-    private fun ResponseBody.toDocument() = use {
-        JsoupUtils.parse(it.byteStream(), Charset.forName("GBK"))
+    private fun ResponseBody.toDocument(charset: Charset = Charsets.UTF_8) = use {
+        JsoupUtils.parse(it.byteStream(), charset = charset)
     }
 }
