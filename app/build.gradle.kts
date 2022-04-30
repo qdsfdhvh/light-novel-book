@@ -71,6 +71,7 @@ dependencies {
 
     // Coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.1")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.1")
 
     // Pref
     implementation("androidx.datastore:datastore:1.0.0")
@@ -82,7 +83,7 @@ dependencies {
     // Paging
     implementation("androidx.paging:paging-runtime-ktx:3.1.1")
 
-    testImplementation("junit:junit:4.13.2")
+    testImplementation(kotlin("test"))
     androidTestImplementation("androidx.test.ext:junit:1.1.3")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")
 }
