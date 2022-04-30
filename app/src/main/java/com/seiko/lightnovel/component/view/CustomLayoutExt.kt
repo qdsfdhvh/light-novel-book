@@ -42,16 +42,16 @@ fun View.autoMeasure(
 
 context(CustomLayout)
 fun View.defaultWidthMeasureSpec(parentView: ViewGroup): Int = when (layoutParams.width) {
-    CustomLayout.MATCH_PARENT -> (parentView.measuredWidth - paddingStart - paddingEnd).toExactlyMeasureSpec()
-    CustomLayout.WRAP_CONTENT -> (parentView.measuredWidth - paddingStart - paddingEnd).toAtMostMeasureSpec()
+    CustomLayout.MATCH_PARENT -> (parentView.measuredWidth - parentView.paddingStart - parentView.paddingEnd).toExactlyMeasureSpec()
+    CustomLayout.WRAP_CONTENT -> (parentView.measuredWidth - parentView.paddingStart - parentView.paddingEnd).toAtMostMeasureSpec()
     0 -> throw IllegalAccessException("Need special treatment for $this")
     else -> layoutParams.width.toExactlyMeasureSpec()
 }
 
 context(CustomLayout)
 fun View.defaultHeightMeasureSpec(parentView: ViewGroup): Int = when (layoutParams.height) {
-    CustomLayout.MATCH_PARENT -> (parentView.measuredHeight - paddingTop - paddingBottom).toExactlyMeasureSpec()
-    CustomLayout.WRAP_CONTENT -> (parentView.measuredHeight - paddingTop - paddingBottom).toAtMostMeasureSpec()
+    CustomLayout.MATCH_PARENT -> (parentView.measuredHeight - parentView.paddingTop - parentView.paddingBottom).toExactlyMeasureSpec()
+    CustomLayout.WRAP_CONTENT -> (parentView.measuredHeight - parentView.paddingTop - parentView.paddingBottom).toAtMostMeasureSpec()
     0 -> throw IllegalAccessException("Need special treatment for $this")
     else -> layoutParams.height.toExactlyMeasureSpec()
 }
