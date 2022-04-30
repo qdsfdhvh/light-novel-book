@@ -1,44 +1,48 @@
+import java.util.Properties
+
 plugins {
-    id 'com.android.application'
-    id 'org.jetbrains.kotlin.android'
+    id("com.android.application")
+    kotlin("android")
 }
 
-File keyProperties = rootProject.file("key.properties")
-def props = new Properties()
+val keyProperties = rootProject.file("key.properties")
+val props = Properties()
 if (keyProperties.exists()) {
-    props.load(new FileInputStream(keyProperties))
+    props.load(keyProperties.inputStream())
 } else {
-    props['TEST_PHPSESSID'] = 'none'
+    props["TEST_PHPSESSID"] = "none"
 }
 
 android {
-    compileSdk 32
+    compileSdk = 31
     defaultConfig {
-        applicationId "com.seiko.lightnovel"
-        minSdk 21
-        targetSdk 32
-        versionCode 1
-        versionName "1.0"
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        applicationId = "com.seiko.lightnovel"
+        minSdk = 21
+        targetSdk = 31
+        versionCode = 1
+        versionName = "1.0"
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-
+            isMinifyEnabled = false
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
             buildConfigField("String", "TEST_PHPSESSID", "\"" + props["TEST_PHPSESSID"] + "\"")
         }
-        debug {
+        getByName("debug") {
             buildConfigField("String", "TEST_PHPSESSID", "\"" + props["TEST_PHPSESSID"] + "\"")
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
     }
     kotlinOptions {
-        jvmTarget = '1.8'
-        freeCompilerArgs = ['-Xcontext-receivers']
+        jvmTarget = "1.8"
+        freeCompilerArgs = listOf("-Xcontext-receivers")
     }
 }
 
@@ -79,6 +83,6 @@ dependencies {
     implementation("androidx.paging:paging-runtime-ktx:3.1.1")
 
     testImplementation("junit:junit:4.13.2")
-    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+    androidTestImplementation("androidx.test.ext:junit:1.1.3")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")
 }
