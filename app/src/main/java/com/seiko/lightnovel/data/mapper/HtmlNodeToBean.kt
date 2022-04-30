@@ -1,8 +1,8 @@
 package com.seiko.lightnovel.data.mapper
 
-import com.seiko.lightnovel.data.model.bean.ArticleBean
+import com.seiko.lightnovel.data.model.bean.Article
 import com.seiko.lightnovel.data.model.bean.ArticleChapter
-import com.seiko.lightnovel.data.model.bean.ArticleDetailBean
+import com.seiko.lightnovel.data.model.bean.ArticleDetail
 import com.seiko.lightnovel.data.model.bean.ArticleVolume
 import com.seiko.lightnovel.data.model.enums.ArticleLibrary
 import com.seiko.lightnovel.data.model.enums.ArticleState
@@ -10,7 +10,7 @@ import com.seiko.lightnovel.data.model.enums.valueOfText
 import com.seiko.lightnovel.data.model.enums.valueOfTitle
 import com.seiko.lightnovel.util.HtmlNode
 
-fun HtmlNode.toArticleList(): List<ArticleBean> {
+fun HtmlNode.toArticleList(): List<Article> {
     return select("#content td > div").map { node ->
         val a = node.select("b > a")
         val id = "(\\d+)".toRegex()
@@ -35,7 +35,7 @@ fun HtmlNode.toArticleList(): List<ArticleBean> {
 
         val desc = ps[3].text()
 
-        ArticleBean(
+        Article(
             id = id,
             title = title,
             cover = cover,
@@ -51,7 +51,7 @@ fun HtmlNode.toArticleList(): List<ArticleBean> {
     }
 }
 
-fun HtmlNode.toArticleDetail(aid: Int): ArticleDetailBean {
+fun HtmlNode.toArticleDetail(aid: Int): ArticleDetail {
     val content = select("#content")
 
     val tables = content.select("div > table")
@@ -75,7 +75,7 @@ fun HtmlNode.toArticleDetail(aid: Int): ArticleDetailBean {
 
     val hasDrama = table2.select("td > span.hottext").eq(0).text().contains("动画化")
 
-    return ArticleDetailBean(
+    return ArticleDetail(
         id = aid,
         title = title,
         cover = cover,

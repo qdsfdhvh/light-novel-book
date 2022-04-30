@@ -2,16 +2,16 @@ package com.seiko.lightnovel.datasource.paging
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.seiko.lightnovel.data.model.bean.ArticleBean
+import com.seiko.lightnovel.data.model.bean.Article
 import com.seiko.lightnovel.data.model.enums.ArticleSort
 import com.seiko.lightnovel.datasource.Wenku8DataSource
 
 class TopListPagingSource(
     private val dataSource: Wenku8DataSource,
     private val articleSort: ArticleSort,
-) : PagingSource<Int, ArticleBean>() {
+) : PagingSource<Int, Article>() {
 
-    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, ArticleBean> {
+    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Article> {
         val page = params.key ?: 1
         return try {
             val list = dataSource.getTopList(articleSort, page)
@@ -25,7 +25,7 @@ class TopListPagingSource(
         }
     }
 
-    override fun getRefreshKey(state: PagingState<Int, ArticleBean>): Int? {
+    override fun getRefreshKey(state: PagingState<Int, Article>): Int? {
         return null
     }
 }

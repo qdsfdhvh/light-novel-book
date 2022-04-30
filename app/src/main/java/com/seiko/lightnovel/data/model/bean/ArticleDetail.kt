@@ -3,7 +3,7 @@ package com.seiko.lightnovel.data.model.bean
 import com.seiko.lightnovel.data.model.enums.ArticleLibrary
 import com.seiko.lightnovel.data.model.enums.ArticleState
 
-data class ArticleDetailBean(
+data class ArticleDetail(
     val id: Int,
     val title: String,
     val cover: String,

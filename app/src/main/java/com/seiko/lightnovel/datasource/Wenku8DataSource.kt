@@ -4,8 +4,8 @@ import com.seiko.lightnovel.data.api.Wenku8Client
 import com.seiko.lightnovel.data.mapper.toArticleDetail
 import com.seiko.lightnovel.data.mapper.toArticleList
 import com.seiko.lightnovel.data.mapper.toArticleVolumes
-import com.seiko.lightnovel.data.model.bean.ArticleBean
-import com.seiko.lightnovel.data.model.bean.ArticleDetailBean
+import com.seiko.lightnovel.data.model.bean.Article
+import com.seiko.lightnovel.data.model.bean.ArticleDetail
 import com.seiko.lightnovel.data.model.bean.ArticleVolume
 import com.seiko.lightnovel.data.model.enums.ArticleSort
 import com.seiko.lightnovel.util.JsoupUtils
@@ -30,14 +30,14 @@ class Wenku8DataSource(
             // TODO
         }
 
-    suspend fun getTopList(sort: ArticleSort, page: Int): List<ArticleBean> =
+    suspend fun getTopList(sort: ArticleSort, page: Int): List<Article> =
         withContext(Dispatchers.IO) {
             val response = client.getTopList(sort.name.lowercase(), page, Charsets.UTF_8.name())
             val document = response.toDocument()
             document.toArticleList()
         }
 
-    suspend fun getDetail(aid: Int): ArticleDetailBean =
+    suspend fun getDetail(aid: Int): ArticleDetail =
         withContext(Dispatchers.IO) {
             val response = client.getDetail(aid, Charsets.UTF_8.name())
             val document = response.toDocument()

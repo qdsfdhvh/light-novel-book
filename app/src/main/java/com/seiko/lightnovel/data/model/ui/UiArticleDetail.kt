@@ -1,6 +1,6 @@
 package com.seiko.lightnovel.data.model.ui
 
-import com.seiko.lightnovel.data.model.bean.ArticleDetailBean
+import com.seiko.lightnovel.data.model.bean.ArticleDetail
 import com.seiko.lightnovel.data.model.bean.ArticleVolume
 import com.seiko.lightnovel.data.model.enums.ArticleLibrary
 import com.seiko.lightnovel.data.model.enums.ArticleState
@@ -31,7 +31,7 @@ data class UiArticleDetail(
     )
 
     companion object {
-        fun of(detail: ArticleDetailBean, volumes: List<ArticleVolume>): UiArticleDetail {
+        fun of(detail: ArticleDetail, volumes: List<ArticleVolume>): UiArticleDetail {
             return UiArticleDetail(
                 id = detail.id,
                 title = detail.title,
