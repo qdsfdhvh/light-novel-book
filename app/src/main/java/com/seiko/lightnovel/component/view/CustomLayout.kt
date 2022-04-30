@@ -24,7 +24,8 @@ abstract class CustomLayout(
      */
     @Suppress("NOTHING_TO_INLINE")
     protected inline fun View.layout(
-        x: Int, y: Int,
+        x: Int,
+        y: Int,
         fromRight: Boolean = false,
         fromBottom: Boolean = false
     ) = layout(
@@ -67,7 +68,9 @@ abstract class CustomLayout(
      */
     @Suppress("NOTHING_TO_INLINE")
     protected inline fun View.layoutHorizontal(
-        x: Int, target: View, fromRight: Boolean = false
+        x: Int,
+        target: View,
+        fromRight: Boolean = false
     ) = layout(
         x = x,
         y = target.top + (target.measuredHeight - measuredHeight) / 2,
@@ -90,7 +93,9 @@ abstract class CustomLayout(
      */
     @Suppress("NOTHING_TO_INLINE")
     protected inline fun View.layoutVertical(
-        y: Int, target: View, fromBottom: Boolean = false
+        y: Int,
+        target: View,
+        fromBottom: Boolean = false
     ) = layout(
         x = target.left + (target.measuredWidth - measuredWidth) / 2,
         y = y,

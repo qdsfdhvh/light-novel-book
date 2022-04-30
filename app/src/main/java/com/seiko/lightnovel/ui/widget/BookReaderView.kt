@@ -14,10 +14,8 @@ class BookReaderView(context: Context) : View(context) {
     }
 
     private fun drawWidgets(canvas: Canvas) {
-
     }
 
     private fun drawContent(canvas: Canvas) {
-
     }
 }

@@ -9,7 +9,6 @@ import okhttp3.HttpUrl
 class Wenku8CookieJar(context: Context) : CookieJar {
 
     override fun saveFromResponse(url: HttpUrl, cookies: List<Cookie>) {
-
     }
 
     override fun loadForRequest(url: HttpUrl): List<Cookie> {

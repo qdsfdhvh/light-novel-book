@@ -26,7 +26,6 @@ class DetailLayout(context: Context, aid: Int) : BaseListLayout(context) {
 
     init {
         val detailAdapter = ArticleDetailAdapter {
-
         }
         val volumeAdapter = ArticleDetailVolumeAdapter {
             navController.navigate("reader/${it.id}")
