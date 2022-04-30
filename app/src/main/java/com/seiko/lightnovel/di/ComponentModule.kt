@@ -1,5 +1,6 @@
 package com.seiko.lightnovel.di
 
+import android.app.Activity
 import com.seiko.lightnovel.MainActivity
 import com.seiko.lightnovel.component.loading.GlobalLoader
 import com.seiko.lightnovel.util.GlobalLoadingAdapter
@@ -11,7 +12,7 @@ val componentModule = module {
             GlobalLoadingAdapter()
         }
         scoped {
-            GlobalLoader(get(), get())
+            GlobalLoader(get<Activity>(), get())
         }
     }
 }

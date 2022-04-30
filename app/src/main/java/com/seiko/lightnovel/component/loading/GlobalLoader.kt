@@ -2,14 +2,19 @@ package com.seiko.lightnovel.component.loading
 
 import android.app.Activity
 import android.view.ViewGroup
-import android.widget.FrameLayout
 
 class GlobalLoader(
-    activity: Activity,
+    wrapperBuilder: () -> ViewGroup,
     private val adapter: Adapter,
 ) {
-    private val wrapper: FrameLayout by lazy(LazyThreadSafetyMode.NONE) {
-        activity.findViewById(android.R.id.content)
+
+    constructor(activity: Activity, adapter: Adapter) : this(
+        wrapperBuilder = { activity.findViewById(android.R.id.content) },
+        adapter = adapter,
+    )
+
+    private val wrapper by lazy(LazyThreadSafetyMode.NONE) {
+        wrapperBuilder()
     }
 
     fun showState(state: LoadingState) {
