@@ -10,19 +10,9 @@ private val chapterRegex = arrayOf(
 )
 
 fun String.findChapterRegex(): Regex? {
-    for (regex in chapterRegex) {
-        if (this.matches(regex)) {
-            return regex
-        }
-    }
-    return null
+    return chapterRegex.find { this.matches(it) }
 }
 
 fun String.isChapterTitle(): Boolean {
-    for (regex in chapterRegex) {
-        if (this.matches(regex)) {
-            return true
-        }
-    }
-    return false
+    return chapterRegex.any { this.matches(it) }
 }
