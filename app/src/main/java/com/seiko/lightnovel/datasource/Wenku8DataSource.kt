@@ -4,10 +4,13 @@ import com.seiko.lightnovel.data.api.Wenku8Client
 import com.seiko.lightnovel.data.mapper.toArticleDetail
 import com.seiko.lightnovel.data.mapper.toArticleList
 import com.seiko.lightnovel.data.mapper.toArticleVolumes
+import com.seiko.lightnovel.data.mapper.toContentList
 import com.seiko.lightnovel.data.model.bean.Article
+import com.seiko.lightnovel.data.model.bean.ArticleContent
 import com.seiko.lightnovel.data.model.bean.ArticleDetail
 import com.seiko.lightnovel.data.model.bean.ArticleVolume
 import com.seiko.lightnovel.data.model.enums.ArticleSort
+import com.seiko.lightnovel.util.GBK
 import com.seiko.lightnovel.util.JsoupUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -48,8 +51,15 @@ class Wenku8DataSource(
         withContext(Dispatchers.IO) {
             // api not support charset
             val response = client.getDetailVolumes(aid / 1000, aid)
-            val document = response.toDocument(Charset.forName("GBK"))
+            val document = response.toDocument(Charsets.GBK)
             document.toArticleVolumes()
+        }
+
+    suspend fun getContentList(aid: Int, cid: Int): List<ArticleContent> =
+        withContext(Dispatchers.IO) {
+            val response = client.getContentList(aid, cid, Charsets.UTF_8.name())
+            val document = response.toDocument()
+            document.toContentList()
         }
 
     private fun ResponseBody.toDocument(charset: Charset = Charsets.UTF_8) = use {

@@ -13,8 +13,8 @@ class LocalTxtNovelReader(
 
     private val isSetup = AtomicBoolean(false)
 
-    private val volumes = mutableListOf<NovelVolume>()
-    private val chapters = mutableMapOf<Any, MutableList<NovelChapter>>()
+    private val volumes = mutableListOf<NovelChapter>()
+    private val chapters = mutableMapOf<Any, MutableList<NovelContent>>()
 
     private fun setupNovel() {
         inputStream.reader(charset).useLines { lines ->
@@ -32,7 +32,7 @@ class LocalTxtNovelReader(
                 if (isVolume) {
                     currentKey = line.md5_16
                     volumes.add(
-                        NovelVolume(
+                        NovelChapter(
                             title = line,
                             key = currentKey,
                         )
@@ -41,26 +41,26 @@ class LocalTxtNovelReader(
                 val chapters = chapters.getOrPut(currentKey) { mutableListOf() }
                 chapters.add(
                     if (isVolume) {
-                        NovelChapter.Title(line)
+                        NovelContent.Title(line)
                     } else {
-                        NovelChapter.Content(line)
+                        NovelContent.Text(line)
                     }
                 )
             }
         }
     }
 
-    override suspend fun getVolumeList(): List<NovelVolume> {
+    override suspend fun getVolumeList(): List<NovelChapter> {
         if (isSetup.compareAndSet(false, true)) {
             setupNovel()
         }
         return volumes
     }
 
-    override suspend fun getChapterList(volume: NovelVolume): List<NovelChapter> {
+    override suspend fun getContentList(chapter: NovelChapter): List<NovelContent> {
         if (isSetup.compareAndSet(false, true)) {
             setupNovel()
         }
-        return chapters[volume.key] ?: emptyList()
+        return chapters[chapter.key] ?: emptyList()
     }
 }

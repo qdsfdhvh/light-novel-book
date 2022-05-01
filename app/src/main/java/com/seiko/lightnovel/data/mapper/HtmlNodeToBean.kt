@@ -2,6 +2,7 @@ package com.seiko.lightnovel.data.mapper
 
 import com.seiko.lightnovel.data.model.bean.Article
 import com.seiko.lightnovel.data.model.bean.ArticleChapter
+import com.seiko.lightnovel.data.model.bean.ArticleContent
 import com.seiko.lightnovel.data.model.bean.ArticleDetail
 import com.seiko.lightnovel.data.model.bean.ArticleVolume
 import com.seiko.lightnovel.data.model.enums.ArticleLibrary
@@ -122,4 +123,18 @@ fun HtmlNode.toArticleVolumes(): List<ArticleVolume> {
         }
     }
     return volumes
+}
+
+fun HtmlNode.toContentList(): List<ArticleContent> {
+    val title = select("#title")
+    val titles = if (title.isEmpty()) emptyList() else listOf(ArticleContent.Title(title.text()))
+
+    val content = select("#content")
+    val texts = content.textNodes().filterNot { it.isBlank }.map {
+        ArticleContent.Text(it.text().trim())
+    }
+    val images = content.select(".divimage > a").filter { it.hasAttr("href") }.map {
+        ArticleContent.Image(it.attr("href"))
+    }
+    return titles + texts + images
 }

@@ -42,5 +42,10 @@ interface Wenku8Client {
         @Path("aid") aid: Int,
     ): ResponseBody
 
-    // 5 volumes and 12 chapters
+    @GET("modules/article/reader.php?aid={aid}&cid={cid}")
+    suspend fun getContentList(
+        @Path("aid") aid: Int,
+        @Path("cid") cid: Int,
+        @Query("charset") charset: String,
+    ): ResponseBody
 }
