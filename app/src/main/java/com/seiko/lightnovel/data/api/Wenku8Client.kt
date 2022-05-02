@@ -42,10 +42,10 @@ interface Wenku8Client {
         @Path("aid") aid: Int,
     ): ResponseBody
 
-    @GET("modules/article/reader.php?aid={aid}&cid={cid}")
+    @GET("modules/article/reader.php")
     suspend fun getContentList(
-        @Path("aid") aid: Int,
-        @Path("cid") cid: Int,
+        @Query("aid") aid: Int,
+        @Query("cid") cid: Int,
         @Query("charset") charset: String,
     ): ResponseBody
 }
