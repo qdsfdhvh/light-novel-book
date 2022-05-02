@@ -22,8 +22,9 @@ fun NavGraphBuilder.route(context: Context) {
         DetailLayout(context, it.getInt("aid"))
     }
     composable(
-        route = Route.Reader,
+        route = Route.Reader.Wenku8.path,
         arguments = listOf(
+            navArgument("aid") { type = NavType.IntType },
             navArgument("vid") { type = NavType.IntType },
         ),
     ) {
