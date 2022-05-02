@@ -50,7 +50,7 @@ class LocalTxtNovelReader(
         }
     }
 
-    override suspend fun getVolumeList(): List<NovelChapter> {
+    override suspend fun getChapterList(): List<NovelChapter> {
         if (isSetup.compareAndSet(false, true)) {
             setupNovel()
         }

@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.seiko.lightnovel.component.koin.viewModel
 import com.seiko.lightnovel.component.loading.GlobalLoader
 import com.seiko.lightnovel.component.loading.LoadingState
+import com.seiko.lightnovel.route.Route
 import com.seiko.lightnovel.ui.adapter.ArticleDetailAdapter
 import com.seiko.lightnovel.ui.adapter.ArticleDetailVolumeAdapter
 import com.seiko.lightnovel.util.observer
@@ -16,7 +17,7 @@ import org.koin.core.component.inject
 import org.koin.core.parameter.parametersOf
 
 @SuppressLint("ViewConstructor")
-class DetailLayout(context: Context, aid: Int) : BaseListLayout(context) {
+class DetailLayout(context: Context, private val aid: Int) : BaseListLayout(context) {
 
     private val globalLoader: GlobalLoader by inject()
 
@@ -28,7 +29,7 @@ class DetailLayout(context: Context, aid: Int) : BaseListLayout(context) {
         val detailAdapter = ArticleDetailAdapter {
         }
         val volumeAdapter = ArticleDetailVolumeAdapter {
-            navController.navigate("reader/${it.id}")
+            navController.navigate(Route.Reader.Wenku8(aid, it.id))
         }
 
         recyclerView.layoutManager = LinearLayoutManager(context)

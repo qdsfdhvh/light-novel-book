@@ -15,7 +15,7 @@ class LocalTxtNovelReaderTest {
         val dir = File("src/test/resources/novel")
         dir.listFiles()?.forEach { file ->
             val novelReader = LocalTxtNovelReader(file.inputStream(), Charsets.GBK)
-            val chapterList = novelReader.getVolumeList()
+            val chapterList = novelReader.getChapterList()
             // println(volumeList.joinToString(" | ") { it.title })
             assertTrue(chapterList.isNotEmpty())
             val contentList = novelReader.getContentList(chapterList[0])

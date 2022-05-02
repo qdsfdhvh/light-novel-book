@@ -9,7 +9,7 @@ class Wenku8NovelReader(
     private val dataSource: Wenku8DataSource,
 ) : NovelReader {
 
-    override suspend fun getVolumeList(): List<NovelChapter> {
+    override suspend fun getChapterList(): List<NovelChapter> {
         val volume = dataSource.getDetailVolumes(aid).find { it.id == vid } ?: return emptyList()
         return volume.chapters.map { chapter ->
             NovelChapter(

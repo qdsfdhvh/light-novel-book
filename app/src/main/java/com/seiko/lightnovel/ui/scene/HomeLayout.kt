@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.seiko.lightnovel.component.koin.viewModel
 import com.seiko.lightnovel.component.loading.GlobalLoader
 import com.seiko.lightnovel.component.loading.LoadingState
+import com.seiko.lightnovel.route.Route
 import com.seiko.lightnovel.ui.adapter.ArticleListAdapter
 import com.seiko.lightnovel.util.observer
 import com.seiko.lightnovel.viewmodel.HomeViewModel
@@ -19,7 +20,7 @@ class HomeLayout(context: Context) : BaseListLayout(context) {
 
     init {
         val adapter = ArticleListAdapter { article ->
-            navController.navigate("detail/${article.id}")
+            navController.navigate(Route.Detail(article.id))
         }
 
         recyclerView.layoutManager = LinearLayoutManager(context)
