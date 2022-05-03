@@ -28,7 +28,7 @@ class BookBackgroundView(context: Context) : View(context) {
 
     private fun createBackgroundEdge(w: Int, h: Int): Drawable {
         val bitmap = BitmapFactory.decodeResource(
-            context.resources, R.drawable.reader_bg_yellow_edge
+            context.resources, R.mipmap.reader_bg_yellow_edge
         )
         return BitmapDrawable(context.resources, bitmap).apply {
             setBounds(0, 0, w, h)
@@ -37,9 +37,9 @@ class BookBackgroundView(context: Context) : View(context) {
 
     private fun createBackgroundContent(w: Int, h: Int): Drawable {
         val bitmaps = arrayOf(
-            BitmapFactory.decodeResource(context.resources, R.drawable.reader_bg_yellow1),
-            BitmapFactory.decodeResource(context.resources, R.drawable.reader_bg_yellow2),
-            BitmapFactory.decodeResource(context.resources, R.drawable.reader_bg_yellow3),
+            BitmapFactory.decodeResource(context.resources, R.mipmap.reader_bg_yellow1),
+            BitmapFactory.decodeResource(context.resources, R.mipmap.reader_bg_yellow2),
+            BitmapFactory.decodeResource(context.resources, R.mipmap.reader_bg_yellow3),
         )
         return BitmapDrawable(context.resources, bitmaps.random()).apply {
             setTileModeXY(Shader.TileMode.REPEAT, Shader.TileMode.REPEAT)
