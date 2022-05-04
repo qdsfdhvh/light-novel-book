@@ -1,6 +1,7 @@
 package com.seiko.lightnovel.component.navigation
 
 import android.content.Context
+import android.view.WindowInsets
 import androidx.core.view.children
 import androidx.navigation.NavController
 import androidx.navigation.NavHost
@@ -11,6 +12,10 @@ class NavHostLayout(context: Context) : CustomLayout(context), NavHost {
 
     override val navController = NavController(context).apply {
         navigatorProvider.addNavigator(ViewNavigator(this@NavHostLayout))
+    }
+
+    init {
+        fitsSystemWindows = false
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -24,5 +29,9 @@ class NavHostLayout(context: Context) : CustomLayout(context), NavHost {
         children.forEach {
             it.layout(0, 0)
         }
+    }
+
+    override fun onApplyWindowInsets(insets: WindowInsets): WindowInsets {
+        return insets
     }
 }

@@ -1,8 +1,8 @@
 package com.seiko.lightnovel.ui.scene
 
 import android.content.Context
-import android.view.View
-import androidx.navigation.NavController
+import android.view.WindowInsets
+import androidx.core.view.ancestors
 import androidx.navigation.NavHost
 import com.seiko.lightnovel.component.view.LifecycleLayout
 import org.koin.android.scope.AndroidScopeComponent
@@ -17,17 +17,16 @@ abstract class BaseLayout(context: Context) : LifecycleLayout(context), KoinScop
     override val scope: Scope by layoutScope()
 
     protected val navController by lazy(LazyThreadSafetyMode.NONE) {
-        findNavController(this)
+        ancestors.firstNotNullOf { (it as? NavHost)?.navController }
     }
-}
 
-private fun findNavController(view: View): NavController {
-    var parent = view.parent
-    while (parent != null) {
-        if (parent is NavHost) return parent.navController
-        parent = parent.parent
+    init {
+        fitsSystemWindows = false
     }
-    throw RuntimeException("no find navController in $view")
+
+    override fun onApplyWindowInsets(insets: WindowInsets): WindowInsets {
+        return insets
+    }
 }
 
 private fun BaseLayout.layoutScope() = LifecycleScopeDelegate<BaseLayout>(

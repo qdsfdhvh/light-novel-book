@@ -2,8 +2,12 @@ package com.seiko.lightnovel.ui.scene
 
 import android.annotation.SuppressLint
 import android.content.Context
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.seiko.lightnovel.component.insets.doOnApplyWindowInsets
+import com.seiko.lightnovel.component.insets.translateDeferringInsetsAnimation
 import com.seiko.lightnovel.component.koin.viewModel
 import com.seiko.lightnovel.component.loading.GlobalLoader
 import com.seiko.lightnovel.component.loading.LoadingState
@@ -26,6 +30,8 @@ class DetailLayout(context: Context, private val aid: Int) : BaseListLayout(cont
     })
 
     init {
+        setupWindowInsets()
+
         val detailAdapter = ArticleDetailAdapter {
         }
         val volumeAdapter = ArticleDetailVolumeAdapter {
@@ -34,6 +40,7 @@ class DetailLayout(context: Context, private val aid: Int) : BaseListLayout(cont
 
         recyclerView.layoutManager = LinearLayoutManager(context)
         recyclerView.adapter = ConcatAdapter(detailAdapter, volumeAdapter)
+        recyclerView.clipToPadding = false
 
         viewModel.bookDetail.observer { state ->
             when (state) {
@@ -44,6 +51,16 @@ class DetailLayout(context: Context, private val aid: Int) : BaseListLayout(cont
                     volumeAdapter.volumes = state.detail.volumes
                 }
             }
+        }
+    }
+
+    private fun setupWindowInsets() {
+        doOnApplyWindowInsets { windowInsets, padding, _ ->
+            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+            recyclerView.updatePadding(
+                top = padding.top + insets.top,
+                bottom = padding.bottom + insets.bottom
+            )
         }
     }
 }

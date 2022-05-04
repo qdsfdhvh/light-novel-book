@@ -1,8 +1,11 @@
 package com.seiko.lightnovel.ui.scene
 
 import android.content.Context
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.seiko.lightnovel.component.insets.doOnApplyWindowInsets
 import com.seiko.lightnovel.component.koin.viewModel
 import com.seiko.lightnovel.component.loading.GlobalLoader
 import com.seiko.lightnovel.component.loading.LoadingState
@@ -19,12 +22,15 @@ class HomeLayout(context: Context) : BaseListLayout(context) {
     private val viewModel: HomeViewModel by viewModel()
 
     init {
+        setupWindowInsets()
+
         val adapter = ArticleListAdapter { article ->
             navController.navigate(Route.Detail(article.id))
         }
 
         recyclerView.layoutManager = LinearLayoutManager(context)
         recyclerView.adapter = adapter
+        recyclerView.clipToPadding = false
 
         viewModel.topPagingList.observer {
             adapter.submitData(it)
@@ -36,6 +42,16 @@ class HomeLayout(context: Context) : BaseListLayout(context) {
                 is LoadState.Error -> LoadingState.Failure
             }
             globalLoader.showState(state)
+        }
+    }
+
+    private fun setupWindowInsets() {
+        doOnApplyWindowInsets { windowInsets, padding, _ ->
+            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+            recyclerView.updatePadding(
+                top = padding.top + insets.top,
+                bottom = padding.bottom + insets.bottom
+            )
         }
     }
 }
