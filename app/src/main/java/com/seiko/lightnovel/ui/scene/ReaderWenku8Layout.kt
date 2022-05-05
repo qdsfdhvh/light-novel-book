@@ -2,7 +2,11 @@ package com.seiko.lightnovel.ui.scene
 
 import android.annotation.SuppressLint
 import android.content.Context
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
+import com.seiko.lightnovel.component.insets.doOnApplyWindowInsets
 import com.seiko.lightnovel.component.koin.viewModel
+import com.seiko.lightnovel.component.view.dp
 import com.seiko.lightnovel.component.view.sp
 import com.seiko.lightnovel.novel.view.ReaderConfig
 import com.seiko.lightnovel.ui.adapter.ReaderAdapter
@@ -19,6 +23,8 @@ class ReaderWenku8Layout(context: Context, aid: Int, vid: Int) : BaseListLayout(
     })
 
     init {
+        setupWindowInsets()
+
         val adapter = ReaderAdapter()
 
         recyclerView.layoutManager = ViewPagerLayoutManager(context)
@@ -38,7 +44,22 @@ class ReaderWenku8Layout(context: Context, aid: Int, vid: Int) : BaseListLayout(
             titleSize = 16.sp,
             textSize = 20.sp,
             widgetSize = 12.sp,
+            lineSpace = 10.sp,
+            paddingTop = recyclerView.paddingTop,
+            paddingBottom = recyclerView.paddingBottom,
+            paddingLeft = recyclerView.paddingLeft + 10.dp,
+            paddingRight = recyclerView.paddingRight + 10.dp,
         )
         viewModel.updateReaderConfig(config)
+    }
+
+    private fun setupWindowInsets() {
+        doOnApplyWindowInsets { windowInsets, padding, _ ->
+            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+            recyclerView.updatePadding(
+                top = padding.top + insets.top,
+                bottom = padding.bottom + insets.bottom
+            )
+        }
     }
 }

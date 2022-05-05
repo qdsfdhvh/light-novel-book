@@ -7,7 +7,6 @@ import androidx.core.view.updatePadding
 import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.seiko.lightnovel.component.insets.doOnApplyWindowInsets
-import com.seiko.lightnovel.component.insets.translateDeferringInsetsAnimation
 import com.seiko.lightnovel.component.koin.viewModel
 import com.seiko.lightnovel.component.loading.GlobalLoader
 import com.seiko.lightnovel.component.loading.LoadingState

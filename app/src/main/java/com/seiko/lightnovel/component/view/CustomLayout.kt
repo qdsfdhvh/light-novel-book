@@ -219,10 +219,9 @@ abstract class CustomLayout(
         return LayoutParams(WRAP_CONTENT, WRAP_CONTENT)
     }
 
-    class LayoutParams : MarginLayoutParams {
-        constructor(size: Int) : super(size, size)
-        constructor(width: Int = WRAP_CONTENT, height: Int = WRAP_CONTENT) : super(width, height)
-    }
+    class LayoutParams(width: Int = WRAP_CONTENT, height: Int = WRAP_CONTENT) : MarginLayoutParams(width, height)
+
+    fun LayoutParams(size: Int) = LayoutParams(size, size)
 
     companion object {
         const val WRAP_CONTENT = MarginLayoutParams.WRAP_CONTENT

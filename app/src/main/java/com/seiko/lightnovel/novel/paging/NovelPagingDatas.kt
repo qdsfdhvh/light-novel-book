@@ -1,130 +1,141 @@
 package com.seiko.lightnovel.novel.paging
 
-import android.text.TextPaint
+import android.graphics.Paint
 import androidx.annotation.ColorInt
 import com.seiko.lightnovel.novel.reader.NovelChapter
 import com.seiko.lightnovel.novel.reader.NovelContent
 import com.seiko.lightnovel.novel.view.ReaderConfig
 
-data class PageChapter(
-    val chapterKey: Any,
-    val chapterPage: Int,
-) {
-    private val _contents: MutableList<PageContent> = mutableListOf()
-    val contents: List<PageContent> get() = _contents
+sealed class NovelPagingData {
 
-    fun addContent(content: PageContent) {
-        _contents.add(content)
-    }
+    abstract val key: Any
 
-    override fun toString(): String {
-        return "PageChapter(" +
-            "chapterKey=$chapterKey," +
-            "chapterPage=$chapterPage," +
-            "contents=${contents.joinToString(prefix = "[", postfix = "]")}" +
-            ")"
-    }
-}
-
-sealed class PageContent {
-    data class Title(
-        val title: String,
-        val titleSize: Float,
-        @ColorInt val titleColor: Int,
-        val y: Float,
-    ) : PageContent()
-
+    // 纯文字
     data class Text(
-        val text: String,
-        val textSize: Float,
-        @ColorInt val textColor: Int,
-        val y: Float,
-    ) : PageContent()
+        val chapterKey: Any,
+        val page: Int,
+        val contents: List<Content>,
+    ) : NovelPagingData() {
 
+        override val key: Any = "$chapterKey-$page"
+
+        data class Content(
+            val text: String,
+            val textSize: Float,
+            @ColorInt val textColor: Int,
+            val x: Float,
+            val y: Float,
+        )
+    }
+
+    // 图片 一页一张
     data class Image(
+        val chapterKey: Any,
+        val page: Int,
         val url: String,
-    ) : PageContent()
+    ) : NovelPagingData() {
+        override val key: Any = "$chapterKey-$page"
+    }
+
+    // 居中绘制的说明页
+    data class Tip(
+        val chapterKey: Any,
+        val text: String,
+    ) : NovelPagingData() {
+        override val key: Any = "$chapterKey-$text"
+    }
 }
 
-fun List<NovelContent>.toPageContents(
+fun List<NovelContent>.toPagingDataList(
     chapter: NovelChapter,
     config: ReaderConfig,
-): List<PageChapter> {
+): List<NovelPagingData> {
     if (config == ReaderConfig.None) return emptyList()
 
-    val paint = TextPaint().apply {
-        textSize = config.textSize
-    }
-
-    val viewWidth = config.viewWidth
-    val viewHeight = config.viewHeight
-    val titleSize = config.titleSize
-    val textSize = config.textSize
-    val contentPadding = config.contentPadding
-
-    val result = mutableListOf<PageChapter>()
+    val result = mutableListOf<NovelPagingData>()
 
     var page = 0
-    fun createNewPageContent() = PageChapter(
+
+    fun createTextPagingData(
+        contents: List<NovelPagingData.Text.Content>,
+    ) = NovelPagingData.Text(
         chapterKey = chapter.key,
-        chapterPage = page++,
-    ).also {
-        result.add(it)
-    }
+        page = page++,
+        contents = contents,
+    ).let { result.add(it) }
 
-    var currentContent = createNewPageContent()
-    var currentHeight = 0f
+    fun createImagePagingData(
+        url: String,
+    ) = NovelPagingData.Image(
+        chapterKey = chapter.key,
+        page = page++,
+        url = url,
+    ).let { result.add(it) }
 
-    fun calcTextAllLineHeight(text: String, textHeight: Float): Float {
-        val textWidth = paint.measureText(text)
-        val textLineNum = (textWidth / viewWidth).toInt() + if ((textWidth % viewWidth).compareTo(0) == 0) 0 else 1
-        return textLineNum * textHeight
-    }
+    val paint = Paint()
+    var currentTextContents = mutableListOf<NovelPagingData.Text.Content>()
 
-    fun addPageContent(textAllLineHeight: Float, block: (y: Float) -> PageContent) {
-        if (viewHeight - currentHeight < textAllLineHeight) {
-            currentContent = createNewPageContent()
-            currentHeight = 0f
-        }
-        currentContent.addContent(block(currentHeight))
-        currentHeight += textAllLineHeight
-        if (viewHeight - currentHeight < contentPadding) {
-            currentHeight += contentPadding
+    val initialHeight = config.paddingTop.toFloat()
+    var currentHeight = initialHeight
+
+    val maxWidth = config.viewWidth - config.paddingLeft - config.paddingRight
+    val maxHeight = config.viewHeight - config.paddingTop - config.paddingBottom
+
+    fun splitTextToContents(text: String, textSize: Float, textColor: Int) {
+        paint.textSize = textSize
+
+        var start = 0
+        while (start < text.length) {
+            val wordCount = paint.breakText(
+                text,
+                start, text.length,
+                false,
+                maxWidth.toFloat(),
+                null
+            )
+            currentTextContents.add(
+                NovelPagingData.Text.Content(
+                    text = text.substring(start, start + wordCount),
+                    textSize = textSize,
+                    textColor = textColor,
+                    x = config.paddingLeft.toFloat(),
+                    y = currentHeight
+                )
+            )
+            start += wordCount
+            currentHeight += textSize + config.lineSpace
+
+            if (currentHeight + textSize > maxHeight) {
+                createTextPagingData(currentTextContents)
+                currentTextContents = mutableListOf()
+                currentHeight = initialHeight
+            }
         }
     }
 
     forEach { content ->
         when (content) {
-            is NovelContent.Image -> {
-                if (currentContent.contents.isNotEmpty()) {
-                    currentContent = createNewPageContent()
-                }
-                currentContent.addContent(
-                    PageContent.Image(content.url)
+            is NovelContent.Text -> {
+                splitTextToContents(
+                    text = content.text,
+                    textSize = config.textSize,
+                    textColor = config.textColor,
                 )
-                currentHeight = viewHeight.toFloat()
             }
             is NovelContent.Title -> {
-                val textAllLineHeight = calcTextAllLineHeight(content.title, titleSize)
-                addPageContent(textAllLineHeight) { y ->
-                    PageContent.Title(
-                        title = content.title,
-                        titleSize = titleSize,
-                        titleColor = config.titleColor,
-                        y = y.toFloat(),
-                    )
-                }
+                splitTextToContents(
+                    text = content.title,
+                    textSize = config.titleSize,
+                    textColor = config.titleColor,
+                )
             }
-            is NovelContent.Text -> {
-                val textAllLineHeight = calcTextAllLineHeight(content.text, textSize)
-                addPageContent(textAllLineHeight) { y ->
-                    PageContent.Text(
-                        text = content.text,
-                        textSize = textSize,
-                        textColor = config.textColor,
-                        y = y.toFloat(),
-                    )
+            is NovelContent.Image -> {
+                if (currentTextContents.isNotEmpty()) {
+                    createTextPagingData(currentTextContents)
+                    currentTextContents = mutableListOf()
+                    currentHeight = initialHeight
                 }
+                createImagePagingData(content.url)
             }
         }
     }

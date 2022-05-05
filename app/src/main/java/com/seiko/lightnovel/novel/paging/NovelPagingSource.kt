@@ -9,7 +9,7 @@ import com.seiko.lightnovel.novel.view.ReaderConfig
 class NovelPagingSource(
     private val reader: NovelReader,
     private val config: ReaderConfig,
-) : PagingSource<Int, PageChapter>() {
+) : PagingSource<Int, NovelPagingData>() {
 
     private var _chapters: List<NovelChapter>? = null
 
@@ -19,13 +19,13 @@ class NovelPagingSource(
         return _chapters!!
     }
 
-    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, PageChapter> {
+    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, NovelPagingData> {
         val page = params.key ?: 0
         val chapters = getChapters()
         return try {
             val chapter = chapters.getOrNull(page)
             val pageContentList = if (chapter != null) {
-                reader.getContentList(chapter).toPageContents(chapter, config)
+                reader.getContentList(chapter).toPagingDataList(chapter, config)
             } else emptyList()
             LoadResult.Page(
                 data = pageContentList,
@@ -37,7 +37,7 @@ class NovelPagingSource(
         }
     }
 
-    override fun getRefreshKey(state: PagingState<Int, PageChapter>): Int? {
+    override fun getRefreshKey(state: PagingState<Int, NovelPagingData>): Int? {
         return null
     }
 }

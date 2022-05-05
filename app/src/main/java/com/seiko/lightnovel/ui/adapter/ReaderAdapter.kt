@@ -5,28 +5,68 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.seiko.lightnovel.novel.paging.PageChapter
-import com.seiko.lightnovel.novel.paging.PageContent
-import kotlin.math.min
+import coil.load
+import com.seiko.lightnovel.novel.paging.NovelPagingData
 
-class ReaderAdapter : PagingDataAdapter<PageChapter, ReaderViewHolder>(PageContentDiffCallback()) {
+class ReaderAdapter : PagingDataAdapter<NovelPagingData, RecyclerView.ViewHolder>(PageContentDiffCallback()) {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ReaderViewHolder {
-        val layout = ReaderItemView(parent.context)
-        return ReaderViewHolder(layout)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        val context = parent.context
+        return when (viewType) {
+            itemTypeText -> {
+                val itemTextView = ItemTextView(context)
+                ItemTextViewHolder(itemTextView)
+            }
+            itemTypeImage -> {
+                val itemImageView = ItemImageView(context)
+                ItemImageViewHolder(itemImageView)
+            }
+            itemTypeTip -> {
+                val textView = TextView(context)
+                ItemTipViewHolder(textView)
+            }
+            else -> throw RuntimeException("unknown viewType=$viewType in ReaderAdapter")
+        }
     }
 
-    override fun onBindViewHolder(holder: ReaderViewHolder, position: Int) {
-        holder.readerView.update(requireNotNull(getItem(position)))
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        when (val data = getItem(position)) {
+            is NovelPagingData.Text -> {
+                (holder as ItemTextViewHolder).itemTextView.update(data)
+            }
+            is NovelPagingData.Image -> {
+                (holder as ItemImageViewHolder).itemImageView.update(data)
+            }
+            is NovelPagingData.Tip -> {
+                (holder as ItemTipViewHolder).textView.text = data.text
+            }
+            else -> Unit
+        }
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        return when (getItem(position)) {
+            is NovelPagingData.Text -> itemTypeText
+            is NovelPagingData.Image -> itemTypeImage
+            else -> itemTypeTip
+        }
+    }
+
+    companion object {
+        private const val itemTypeTip = 0
+        private const val itemTypeText = 1
+        private const val itemTypeImage = 2
     }
 }
 
-class ReaderItemView(context: Context) : View(context) {
+class ItemTextView(context: Context) : View(context) {
 
-    private var pageContent: PageChapter? = null
+    private var pagingData: NovelPagingData.Text? = null
     private val paint = Paint()
 
     init {
@@ -36,80 +76,42 @@ class ReaderItemView(context: Context) : View(context) {
         )
     }
 
-    fun update(content: PageChapter) {
-        this.pageContent = content
+    fun update(page: NovelPagingData.Text) {
+        pagingData = page
         postInvalidate()
     }
 
     override fun onDraw(canvas: Canvas) {
-        pageContent?.contents?.forEach { content ->
-            when (content) {
-                is PageContent.Text -> {
-                    paint.textSize = content.textSize
-                    paint.color = content.textColor
-                    canvas.drawMultiText(
-                        content.text,
-                        0f,
-                        content.y,
-                        paint
-                    )
-                }
-                is PageContent.Title -> {
-                    paint.textSize = content.titleSize
-                    paint.color = content.titleColor
-                    canvas.drawMultiText(
-                        content.title,
-                        0f,
-                        content.y,
-                        paint
-                    )
-                }
-                is PageContent.Image -> Unit
-            }
-        }
-    }
-
-    private val measuredWidthArray = FloatArray(1)
-
-    private fun Canvas.drawMultiText(text: String, x: Float, y: Float, paint: Paint) {
-        val textWidth = paint.measureText(text)
-        if (textWidth <= measuredWidth) {
-            drawText(text, x, y, paint)
-            return
-        }
-
-        var start = 0
-        var topY = y
-        val textSize = text.length
-        while (start < textSize) {
-            val breakTextCount = paint.breakText(
-                text,
-                true,
-                measuredWidth.toFloat(),
-                measuredWidthArray,
-            )
-            drawText(
-                text,
-                start, min(textSize, start + breakTextCount),
-                0f, topY,
+        pagingData?.contents?.forEach { content ->
+            paint.textSize = content.textSize
+            paint.color = content.textColor
+            canvas.drawText(
+                content.text,
+                content.x,
+                content.y,
                 paint,
             )
-            start += breakTextCount
-            topY += paint.textSize
         }
     }
 }
 
-class ReaderViewHolder(val readerView: ReaderItemView) : RecyclerView.ViewHolder(readerView)
+class ItemImageView(context: Context) : ImageView(context) {
+    fun update(data: NovelPagingData.Image) {
+        load(data.url)
+    }
+}
 
-class PageContentDiffCallback : DiffUtil.ItemCallback<PageChapter>() {
+class ItemTextViewHolder(val itemTextView: ItemTextView) : RecyclerView.ViewHolder(itemTextView)
+class ItemImageViewHolder(val itemImageView: ItemImageView) : RecyclerView.ViewHolder(itemImageView)
+class ItemTipViewHolder(val textView: TextView) : RecyclerView.ViewHolder(textView)
 
-    override fun areItemsTheSame(oldItem: PageChapter, newItem: PageChapter): Boolean {
-        return oldItem.chapterKey == newItem.chapterKey &&
-            oldItem.chapterPage == newItem.chapterPage
+private class PageContentDiffCallback : DiffUtil.ItemCallback<NovelPagingData>() {
+
+    override fun areItemsTheSame(oldItem: NovelPagingData, newItem: NovelPagingData): Boolean {
+        return oldItem.key == newItem.key
     }
 
-    override fun areContentsTheSame(oldItem: PageChapter, newItem: PageChapter): Boolean {
+    override fun areContentsTheSame(oldItem: NovelPagingData, newItem: NovelPagingData): Boolean {
         return oldItem == newItem
     }
 }

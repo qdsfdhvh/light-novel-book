@@ -17,7 +17,11 @@ data class ReaderConfig(
     @ColorInt val widgetColor: Int = Color.BLACK,
     val widgetBorder: Float = 1f,
     // global
-    val contentPadding: Int = 5,
+    val lineSpace: Float = 0f,
+    val paddingTop: Int = 0,
+    val paddingBottom: Int = 0,
+    val paddingLeft: Int = 0,
+    val paddingRight: Int = 0,
 ) {
     companion object {
         val None by lazy {
