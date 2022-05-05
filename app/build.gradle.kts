@@ -51,6 +51,9 @@ dependencies {
     implementation("androidx.activity:activity-ktx:1.4.0")
     implementation("androidx.recyclerview:recyclerview:1.2.1")
 
+    // Material3
+    implementation("com.google.android.material:material:1.6.0")
+
     // lifecycle
     implementation("androidx.lifecycle:lifecycle-common:2.4.1")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.4.1")
