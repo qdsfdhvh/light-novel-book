@@ -16,7 +16,8 @@ fun View.doOnApplyWindowInsets(
     val initialPadding = recordInitialPaddingForView()
     val initialMargin = recordInitialMarginForView()
 
-    val callback = object : WindowInsetsAnimationCompat.Callback(DISPATCH_MODE_CONTINUE_ON_SUBTREE),
+    val callback = object :
+        WindowInsetsAnimationCompat.Callback(DISPATCH_MODE_CONTINUE_ON_SUBTREE),
         OnApplyWindowInsetsListener {
 
         private var deferredInsets = false
