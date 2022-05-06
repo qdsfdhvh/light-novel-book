@@ -10,12 +10,12 @@ import androidx.core.view.updatePadding
 typealias InitialPadding = Rect
 typealias InitialMargin = Rect
 
-@Suppress("DEPRECATION")
 fun View.applyBottomWindowInsetForScrollingView(scrollingView: ViewGroup) {
     scrollingView.clipToPadding = false
     val scrollingViewPadding = scrollingView.recordInitialPaddingForView()
     doOnApplyWindowInsets { windowInsets, _, _ ->
-        scrollingView.updatePadding(bottom = scrollingViewPadding.bottom + windowInsets.systemWindowInsetBottom)
+        val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+        scrollingView.updatePadding(bottom = scrollingViewPadding.bottom + insets.bottom)
     }
 }
 
