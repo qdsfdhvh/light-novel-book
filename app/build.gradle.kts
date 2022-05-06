@@ -90,3 +90,14 @@ dependencies {
     androidTestImplementation("androidx.test.ext:junit:1.1.3")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")
 }
+
+// filter some useless library
+configurations.all {
+    exclude(group = "androidx.lifecycle", module = "lifecycle-livedata")
+    exclude(group = "androidx.lifecycle", module = "lifecycle-livedata-ktx")
+    exclude(group = "androidx.lifecycle", module = "lifecycle-livedata-core")
+    exclude(group = "androidx.lifecycle", module = "lifecycle-livedata-core-ktx")
+    exclude(group = "androidx.fragment", module = "fragment")
+    exclude(group = "androidx.viewpager2", module = "viewpager2")
+    exclude(group = "androidx.localbroadcastmanager", module = "localbroadcastmanager")
+}
