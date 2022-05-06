@@ -8,11 +8,12 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LifecycleRegistry
 import androidx.lifecycle.ViewModelStore
 import androidx.lifecycle.ViewModelStoreOwner
+import java.io.Closeable
 
 abstract class LifecycleLayout(
     context: Context,
     attrs: AttributeSet? = null
-) : CustomLayout(context, attrs), LifecycleOwner, ViewModelStoreOwner {
+) : CustomLayout(context, attrs), LifecycleOwner, ViewModelStoreOwner, Closeable {
 
     private val lifecycle by lazy(LazyThreadSafetyMode.NONE) {
         LifecycleRegistry(this)
@@ -22,9 +23,13 @@ abstract class LifecycleLayout(
         ViewModelStore()
     }
 
+    // init {
+    //     lifecycle.handleLifecycleEvent(Lifecycle.Event.ON_CREATE)
+    // }
+
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-        lifecycle.handleLifecycleEvent(Lifecycle.Event.ON_CREATE)
+        lifecycle.handleLifecycleEvent(Lifecycle.Event.ON_START)
     }
 
     override fun onWindowVisibilityChanged(visibility: Int) {
@@ -41,6 +46,10 @@ abstract class LifecycleLayout(
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
+        lifecycle.handleLifecycleEvent(Lifecycle.Event.ON_STOP)
+    }
+
+    override fun close() {
         lifecycle.handleLifecycleEvent(Lifecycle.Event.ON_DESTROY)
         viewModelStoreInner.clear()
     }
